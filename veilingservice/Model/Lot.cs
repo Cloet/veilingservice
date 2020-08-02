@@ -28,7 +28,7 @@ namespace veilingservice.Model
         public DateTime EndTime { get; set; }
 
         [StringLength(1000)]
-        public string Description { get; set; }
+        public string Overview { get; set; }
 
         [DataType(DataType.Currency)]
         public double OpeningsBid { get; set; }

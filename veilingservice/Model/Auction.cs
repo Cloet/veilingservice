@@ -13,7 +13,7 @@ namespace veilingservice.Model
 
         public string Title { get; set; }
 
-        public string Description { get; set; }
+        public string Overview { get; set; }
 
         public DateTime StartDate { get; set; }
 
