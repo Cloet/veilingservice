@@ -112,7 +112,7 @@ namespace veilingservice.Controllers
                 .AsNoTracking()
                 .ToListAsync();
 
-            var path = Path.GetFullPath(@"C:\Users\Mathias\Downloads\Test.png");
+            var path = Path.GetFullPath(images.FirstOrDefault()?.ImageLocation);
             byte[] bytes = System.IO.File.ReadAllBytes(path);
             return File(bytes, FileContentType.GetContentType(path));
         }
