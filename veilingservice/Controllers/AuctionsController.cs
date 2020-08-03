@@ -103,7 +103,7 @@ namespace veilingservice.Controllers
 
         [HttpGet]
         [Route("{id}/images/{imageId}")]
-        public async Task<ActionResult<FileContentResult>> DownloadImageAuction(int id, int imageId)
+        public async Task<IActionResult> DownloadImageAuction(int id, int imageId)
         {
             var result = new HttpResponseMessage(HttpStatusCode.OK);
 
@@ -112,7 +112,7 @@ namespace veilingservice.Controllers
                 .AsNoTracking()
                 .ToListAsync();
 
-            var path = Path.GetFullPath(images.FirstOrDefault()?.ImageLocation);
+            var path = Path.GetFullPath(@"C:\Users\Mathias\Downloads\Test.png");
             byte[] bytes = System.IO.File.ReadAllBytes(path);
             return File(bytes, FileContentType.GetContentType(path));
         }
