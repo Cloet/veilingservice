@@ -34,7 +34,9 @@ namespace veilingservice.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Auction>>> GetAuction()
         {
-            return await _context.Auction.ToListAsync();
+            return await _context.Auction
+                .Include(a => a.Images)
+                .ToListAsync();
         }
 
         private async Task<ActionResult<IEnumerable<Auction>>> GetAuctionByStatus(AuctionStatus status)
@@ -174,7 +176,11 @@ namespace veilingservice.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Auction>> GetAuction(int id)
         {
-            var auction = await _context.Auction.FindAsync(id);
+            var auction = await _context.Auction
+                .Include(i => i.Images)
+                .AsNoTracking()
+                .Where(x => x.ID == id)
+                .FirstOrDefaultAsync();
 
             if (auction == null)
             {
