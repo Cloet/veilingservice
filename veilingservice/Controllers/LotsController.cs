@@ -38,7 +38,9 @@ namespace veilingservice.Controllers
                     .Where(x => x.AuctionID == id).ToListAsync();
             }
 
-            return await _context.Lot.ToListAsync();
+            return await _context.Lot
+                .Include(a => a.Images)
+                .ToListAsync();
         }
 
         [HttpGet]
