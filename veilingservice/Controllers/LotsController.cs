@@ -45,7 +45,7 @@ namespace veilingservice.Controllers
 
         [HttpGet]
         [Route("{id}/images/{imageId}")]
-        public async Task<ActionResult<FileContentResult>> DownloadImageLot(int id, int imageId)
+        public async Task<IActionResult> DownloadImageLot(int id, int imageId)
         {
             var result = new HttpResponseMessage(HttpStatusCode.OK);
 
