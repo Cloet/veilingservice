@@ -68,7 +68,7 @@ namespace veilingservice.Controllers
 
         [HttpPost]
         [Route("{id}/images")]
-        public async Task<IActionResult> UploadImageLot(IList<IFormFile> files, int id)
+        public async Task<IActionResult> UploadImageLot([FromForm] List<IFormFile> files, int id)
         {
             long size = files.Sum(f => f.Length);
 
