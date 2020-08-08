@@ -42,6 +42,7 @@ namespace veilingservice.Controllers
         private async Task<ActionResult<IEnumerable<Auction>>> GetAuctionByStatus(AuctionStatus status)
         {
             return await _context.Auction
+                    .Include(a => a.Images)
                     .Where(x => x.Status == status)
                     .ToListAsync();
         }

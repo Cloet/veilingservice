@@ -34,6 +34,7 @@ namespace veilingservice.Controllers
             if (!string.IsNullOrEmpty(auctionId) && int.TryParse(auctionId, out var id))
             {
                 return await _context.Lot
+                    .Include(a => a.Images)
                     .Where(x => x.AuctionID == id).ToListAsync();
             }
 
@@ -113,7 +114,11 @@ namespace veilingservice.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Lot>> GetLot(int id)
         {
-            var lot = await _context.Lot.FindAsync(id);
+            var lot = await _context.Lot
+                .Include(a => a.Images)
+                .Where(x => x.ID == id)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
 
             if (lot == null)
             {

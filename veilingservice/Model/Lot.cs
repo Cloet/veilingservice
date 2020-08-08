@@ -37,6 +37,7 @@ namespace veilingservice.Model
         [DataType(DataType.Currency)]
         public double Bid { get; set; }
 
+        public IEnumerable<LotImage> Images { get; set; }
 
     }
 }
