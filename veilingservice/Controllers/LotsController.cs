@@ -162,6 +162,35 @@ namespace veilingservice.Controllers
             return NoContent();
         }
 
+        [HttpPost("{id}/Bid")]
+        public async Task<IActionResult> UpdateBid(int lotId, double newBid) {
+            var lot = await _context.Lot.FindAsync(lotId);
+
+            if (lot == null) {
+                return NotFound();
+            }
+
+            if (newBid < lot.Bid) {
+                throw new InvalidOperationException($"Het minimum opbod voor dit lot is {lot.Bid}.");
+            }
+
+            if (newBid < lot.CurrentBid) {
+                throw new InvalidOperationException("Het bod is kleiner dan het huidige bod.");
+            }
+
+            if (lot.CurrentBid == lot.OpeningsBid && newBid >= lot.CurrentBid ||
+                lot.CurrentBid != lot.OpeningsBid && newBid > lot.CurrentBid) {
+                lot.CurrentBid = newBid;
+            } else {
+                throw new InvalidOperationException("Ongeldig bod");
+            }
+
+            _context.Lot.Update(lot);
+            await _context.SaveChangesAsync();
+
+            return Ok(lot);
+        }
+
         // POST: api/Lots
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
