@@ -171,17 +171,26 @@ namespace veilingservice.Controllers
                 return NotFound();
             }
 
-            if (newBid < lot.Bid) {
-                throw new InvalidOperationException($"Het minimum opbod voor dit lot is {lot.Bid}.");
-            }
-
             if (newBid < lot.CurrentBid) {
                 throw new InvalidOperationException("Het bod is kleiner dan het huidige bod.");
+            }
+
+            if ( (newBid - lot.CurrentBid) < lot.Bid)
+            {
+                throw new InvalidOperationException($"Het minimum opbod voor dit lot is {lot.Bid}.");
             }
 
             if (lot.CurrentBid == lot.OpeningsBid && newBid >= lot.CurrentBid ||
                 lot.CurrentBid != lot.OpeningsBid && newBid > lot.CurrentBid) {
                 lot.CurrentBid = newBid;
+                lot.AmountOfBids += 1;
+
+                // Extend auction time with 5 minutes if there is a bid in the last 5 minutes.
+                var span = DateTime.Now - lot.EndTime;
+                if (span.TotalMinutes <= 5) {
+                    lot.EndTime.AddMinutes(5);
+                }
+
             } else {
                 throw new InvalidOperationException("Ongeldig bod");
             }
