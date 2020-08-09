@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -101,7 +102,7 @@ namespace veilingservice.Controllers
                     Directory.CreateDirectory(Path.GetDirectoryName(newpath));
                     System.IO.File.Delete(newpath);
 
-                    _context.LotImage.Add(new LotImage() { LotID = id, ImageLocation = newpath, ID = lastImageID });
+                    _context.LotImage.Add(new LotImage() { LotID = id, ImageLocation = newpath, ID = lastImageID, AspectRatio =  LotImage.CalculateAspectRatio(file.OpenReadStream())});
                     await _context.SaveChangesAsync();
 
                     System.IO.File.Move(path, newpath);

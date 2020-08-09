@@ -162,7 +162,7 @@ namespace veilingservice.Controllers
                     Directory.CreateDirectory(Path.GetDirectoryName(newpath));
                     System.IO.File.Delete(newpath);
 
-                    _context.AuctionImage.Add(new AuctionImage() { AuctionID = id, ImageLocation = newpath, ID = lastImageID });
+                    _context.AuctionImage.Add(new AuctionImage() { AuctionID = id, ImageLocation = newpath, ID = lastImageID, AspectRatio = AuctionImage.CalculateAspectRatio(file.OpenReadStream()) });
                     await _context.SaveChangesAsync();
 
                     System.IO.File.Move(path, newpath);
