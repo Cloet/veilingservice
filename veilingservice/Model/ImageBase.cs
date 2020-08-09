@@ -23,7 +23,7 @@ namespace veilingservice.Model
             using (var imag = Image.FromStream(fileStream)) {
                 double width = imag.Width;
                 double height = imag.Height;
-                ratio = width / height;
+                ratio = height / width;
             }
 
             return ratio;
