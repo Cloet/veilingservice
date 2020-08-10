@@ -164,20 +164,21 @@ namespace veilingservice.Controllers
         }
 
         [HttpPost("{id}/Bid")]
-        public async Task<IActionResult> UpdateBid(int lotId, double newBid) {
-            var lot = await _context.Lot.FindAsync(lotId);
+        public async Task<ActionResult<PostMessage>> UpdateBid(int id, [FromForm] double newBid) {
+            
+            var lot = await _context.Lot.FindAsync(id);
 
             if (lot == null) {
                 return NotFound();
             }
 
             if (newBid < lot.CurrentBid) {
-                throw new InvalidOperationException("Het bod is kleiner dan het huidige bod.");
+                return new PostMessage("Het bod is kleiner dan het huidige bod.");
             }
 
             if ( (newBid - lot.CurrentBid) < lot.Bid)
             {
-                throw new InvalidOperationException($"Het minimum opbod voor dit lot is {lot.Bid}.");
+                return new PostMessage($"Het minimum opbod voor dit lot is {lot.Bid}.");
             }
 
             if (lot.CurrentBid == lot.OpeningsBid && newBid >= lot.CurrentBid ||
@@ -192,13 +193,13 @@ namespace veilingservice.Controllers
                 }
 
             } else {
-                throw new InvalidOperationException("Ongeldig bod");
+                return new PostMessage("Ongeldig bod");
             }
 
             _context.Lot.Update(lot);
             await _context.SaveChangesAsync();
 
-            return Ok(lot);
+            return new PostMessage();
         }
 
         // POST: api/Lots
