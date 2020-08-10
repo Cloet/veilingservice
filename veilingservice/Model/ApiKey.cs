@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using veilingservice.Security;
 
 namespace veilingservice.Model
 {
@@ -26,6 +27,15 @@ namespace veilingservice.Model
         private ApiKey()
         {
 
+        }
+
+        public static string GenerateApiKey(string email, string hashedPassword) {
+            var key = "";
+
+            key += (email.Substring(0, email.Length >= 10 ? 10 : email.Length));
+            key += (hashedPassword.Substring(0, hashedPassword.Length >= 10 ? 10 : hashedPassword.Length));
+
+            return Hasher.GetHashString(key);
         }
 
     }
