@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -30,17 +31,19 @@ namespace veilingservice.Controllers
 
         // GET: api/Lots
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Lot>>> GetLot([FromQuery(Name = "auction")] string auctionId)
+        public async Task<ActionResult<IEnumerable<Lot>>> GetLot([FromQuery(Name = "auction")] string auctionId, [FromQuery(Name ="search")] string searchTerm)
         {
+            IQueryable<Lot> query = _context.Lot.Include(a => a.Images);
+
             if (!string.IsNullOrEmpty(auctionId) && int.TryParse(auctionId, out var id))
-            {
-                return await _context.Lot
-                    .Include(a => a.Images)
-                    .Where(x => x.AuctionID == id).ToListAsync();
+                query = query.Where(x => x.AuctionID == id);
+            if (!string.IsNullOrEmpty(searchTerm)) {
+                searchTerm = searchTerm.ToUpper();
+                query = query.Where(x => EF.Functions.Like(x.Overview.ToUpper(), $"%{searchTerm}%") || EF.Functions.Like(x.Title.ToUpper() , $"%{searchTerm}%"));
             }
 
-            return await _context.Lot
-                .Include(a => a.Images)
+
+            return await query
                 .ToListAsync();
         }
 
@@ -172,13 +175,16 @@ namespace veilingservice.Controllers
                 return NotFound();
             }
 
-            if (newBid < lot.CurrentBid) {
-                return new PostMessage("Het bod is kleiner dan het huidige bod.");
+            if (lot.EndTime > DateTime.Now) {
+                return new PostMessage("Te laat." + Environment.NewLine + "U kan niet langer bieden op dit lot.");
             }
 
-            if ( (newBid - lot.CurrentBid) < lot.Bid)
-            {
-                return new PostMessage($"Het minimum opbod voor dit lot is {lot.Bid}.");
+            if (lot.CurrentBid != lot.OpeningsBid) {
+                if (newBid < lot.CurrentBid)
+                    return new PostMessage("Het bod is kleiner dan het huidige bod.");
+
+                if ((newBid - lot.CurrentBid) < lot.Bid)
+                    return new PostMessage($"Het minimum opbod voor dit lot is {lot.Bid}.");
             }
 
             if (lot.CurrentBid == lot.OpeningsBid && newBid >= lot.CurrentBid ||
