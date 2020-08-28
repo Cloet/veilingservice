@@ -175,16 +175,18 @@ namespace veilingservice.Controllers
                 return NotFound();
             }
 
-            if (lot.EndTime > DateTime.Now) {
-                return new PostMessage("Te laat." + Environment.NewLine + "U kan niet langer bieden op dit lot.");
+            if (lot.EndTime < DateTime.Now) {
+                return new PostMessage("Te laat. " + Environment.NewLine + "U kan niet langer bieden op dit lot.");
             }
 
             if (lot.CurrentBid != lot.OpeningsBid) {
-                if (newBid < lot.CurrentBid)
-                    return new PostMessage("Het bod is kleiner dan het huidige bod.");
+                if (newBid < lot.CurrentBid) {
+                    return new PostMessage("Uw bod is kleiner dan het huidige bod.");
+                }
 
-                if ((newBid - lot.CurrentBid) < lot.Bid)
-                    return new PostMessage($"Het minimum opbod voor dit lot is {lot.Bid}.");
+                if ((newBid - lot.CurrentBid) < lot.Bid) {
+                    return new PostMessage($"Het minimum opbod voor dit lot is {lot.Bid}. {Environment.NewLine}Er moet minstens {lot.CurrentBid+lot.Bid} geboden worden.");
+                }
             }
 
             if (lot.CurrentBid == lot.OpeningsBid && newBid >= lot.CurrentBid ||
