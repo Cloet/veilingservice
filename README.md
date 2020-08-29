@@ -6,7 +6,7 @@ This was created for the exam of NativeAppsI (IOS)
 # Hosting
 
 The API relies on a PostGreSQL database, and needs a configured 'AppSetting' to work.
-For the exam the database the required database and service will be hosted using docker swarm.
+For the exam the required database and service will be hosted using docker swarm.
 
 # Dependency
 
